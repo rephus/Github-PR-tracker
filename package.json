@@ -17,7 +17,7 @@
     "serve-favicon": "2.2.1",
     "winston": "^2.1.1"
   },
-  "author": "Javier Rengel <javier@coconauts.net> (http://coconauts.net)",
+  "author": "Javier Rengel <javier@rengel.me> (http://coconauts.net)",
   "licenses": [
     {
       "type": "GPLv3",
