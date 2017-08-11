@@ -1,6 +1,5 @@
 //dependencies
 var express = require("express");
-var env = require('node-env-file');
 var request = require('superagent');
 
 var logFactory = require('./helpers/log.js');
@@ -9,19 +8,8 @@ var log = logFactory.create("app");
 //Exports app make it testable from supertest
 var app = exports.app = express();
 
-try {
- env(process.cwd() + '/.env');
-} catch(err){}
+var config = require('./config.json');
 
-global.env = process.env;
-
-/**
- *  == Load models ==
- */
-
-/**
- *  == Load utils ==
- */
 var utils = require('./helpers/utils.js');
 
 //var minify = require('./helpers/minify.js');
@@ -40,7 +28,7 @@ app.use(express.static(__dirname + '/public'));
  */
  app.get('/user',function(req, res){
     //Can request https://api.github.com/user to get my user name from github-api
-     res.json({response: {name: process.env.GITHUB_USERNAME}});
+     res.json({response: {name: config.github.username}});
 
  });
  app.get('/issues-search',function(req, res){
@@ -74,5 +62,5 @@ app.use(express.static(__dirname + '/public'));
 
  });
 
-app.listen(process.env.PORT);
-log.info("Server started in http://localhost:"+process.env.PORT);
+app.listen(config.port);
+log.info("Server started in http://localhost:"+config.port);
