@@ -3,6 +3,13 @@
 Search issues on github using Github API and group them by author and title.
 
 Also show a flag (red dot) on recently updated PRs
+
+**Update**
+Now with browser notifications, every 5 minutes, it makes a request
+and triggers a notification if some repos have been updated since the last time you manually refresh the site.
+
+![notification.png](notification.png)
+
 ## Instalation
 
 Install nodejs dependencies by doing

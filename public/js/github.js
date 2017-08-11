@@ -1,7 +1,9 @@
+var lastUpdate = new Date();
+var myUser = "";
+
+
 $(document).ready(function(){
 
-  var myUser = "";
-  var lastUpdate = new Date();
 
   $.ajax({
     url: 'user',
@@ -11,6 +13,53 @@ $(document).ready(function(){
     }
   })
   $("#search-button").click(function(){
+    //Disabled updated notifications
+    lastUpdate = new Date();  
+    search();
+  });
+
+  setInterval(search, 60*5*1000); // reload every 5 minutes
+})
+
+function notify(msg) {
+  var title = "Github PR notification"; 
+  var options = {
+    body: msg,
+    icon: "favicon.png"
+  };
+  var timeout = 5000;
+
+  // Let's check if the browser supports notifications
+  if (!("Notification" in window)) {
+    alert("This browser does not support desktop notification");
+  }
+
+  
+  // Let's check whether notification permissions have already been granted
+  else if (Notification.permission === "granted") {
+    // If it's okay let's create a notification
+    var notification = new Notification(title, options);
+    setTimeout(function(){ notification.close() }, timeout);
+
+  }
+
+  // Otherwise, we need to ask the user for permission
+  else if (Notification.permission !== "denied") {
+    Notification.requestPermission(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification(title, options);
+        setTimeout(function(){ notification.close() }, timeout);
+
+      }
+    });
+  }
+
+  // At last, if the user has denied notifications, and you 
+  // want to be respectful there is no need to bother them any more.
+}
+
+function search(){
     var token = $("#token").val();
     var search = $("#search").val();
 
@@ -19,6 +68,8 @@ $(document).ready(function(){
     if (!token || !search) return;
 
     var url = "issues-search?token="+token+"&search="+search;
+    var nUpdated = 0;
+
     $.ajax({
       url: url,
       success: function(json){
@@ -54,6 +105,7 @@ $(document).ready(function(){
             issue.repository_url = issue.repository_url.replace('api.', '').replace('repos/', '');
 
             issue.updated = new Date(issue.updated_at) > lastUpdate;
+            if (issue.updated) nUpdated++;
 
             if (issue.user.login === myUser) {
               addIssue(myPrs, group, issue);
@@ -69,10 +121,7 @@ $(document).ready(function(){
 
           $("#my-prs").html("<b>My PRS</b>").append(myPrsRendered);
           $("#other-prs").html("<b>Other PRs</b>").append(otherPrsRendered);
-
-          lastUpdate = new Date();
+          if (nUpdated > 0 ) notify(nUpdated + " issues updated");
       }
     })
-  })
-
-})
+  }
