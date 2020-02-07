@@ -36,7 +36,7 @@ app.use(express.static(__dirname + '/public'));
      var search = encodeURIComponent(req.query.search);
 
      var domain = "https://api.github.com";
-     var url = domain + "/search/issues?access_token="+token+"&q="+search;
+     var url = domain + "/search/issues?q="+search;
      log.info("Making request to github: "+ url);
 
      var debug=false;
@@ -49,6 +49,7 @@ app.use(express.static(__dirname + '/public'));
       } else {
         request
          .get(url)
+         .set('Authorization', 'token '+token)
          .end(function(err, response){
 
            if (err)  {
