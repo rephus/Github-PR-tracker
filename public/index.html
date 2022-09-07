@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8"></meta>
         <title>Github issues</title>
-        <link rel="icon" type="image/x-icon" href="favicon.png" />
+        <link rel="icon" type="image/x-icon" id='favicon' href="favicon-green.png" />
 
         <script languaje='javascript' src="js/ux/jquery.min.js"></script>
         <script languaje='javascript' src="js/ux/mustache.min.js"></script>
@@ -16,8 +16,8 @@
 
     </head>
     <body>
-      <label>Token</label><input id='token' placeholder="token" value=''/>
-        <label>Search</label><input id='search' placeholder='search' value='is:open is:pr involves:rephus user:networklocum'/>
+      <label>Token</label><input id='token' placeholder="token" value='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'/>
+        <label>Search</label><input id='search' placeholder='search' value='is:open is:pr  repo:lightdash/lightdash'/>
       <button id='search-button'>Search</button>
 
         <script id='file-template' type=x-tmpl-mustache>
@@ -39,6 +39,11 @@
           <div id='my-prs'>
           </div>
           <div id='other-prs'>
+          </div>
+          <div>
+          <b>Today report</b>
+            <p id='today-report'>
+            </p>
           </div>
     </body>
 </html>
