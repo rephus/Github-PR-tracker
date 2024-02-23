@@ -19,6 +19,7 @@ $(document).ready(function(){
     lastUpdate = new Date();  
     search();
     report(); 
+    review(); 
   });
 
   setInterval(search, 60*5*1000); // reload every 5 minutes
@@ -141,6 +142,76 @@ function search(){
   }
   
 
+  function review(){
+    var token = $("#token").val();
+    var search = $("#search").val();
+
+    if (!token) alert("Search requires a private token to work");
+    if (!search) alert("Search can't be empty, eg: is:open");
+    if (!token || !search) return;
+
+    var url = "issues-search?token="+token+"&search="+search + " review-requested:@me";
+    var nUpdated = 0;
+
+    $.ajax({
+      url: url,
+      success: function(json){
+        if (json.error) {
+          console.error("Unable to get issues ", json.error);
+          return
+        }
+        myPrs = [];
+          var otherPrs = [];
+
+          var getGroup = function(issues, groupName){
+            for (var i = 0; i <issues.length; i++){
+              if (issues[i][0].title === groupName) return i;
+            }
+            return -1;
+          }
+          var addIssue = function(issues, group, issue){
+            var groupId = getGroup(issues, group);
+            if (groupId < 0) issues.push([issue]);
+            else issues[groupId].push(issue);
+          }
+
+          github= json;
+
+          for (var i=0 ; i < json.items.length; i++){
+            var issue = json.items[i];
+            var group = issue.title;
+
+            var rep_url = issue.repository_url.split("/");
+            var repository = rep_url[rep_url.length -1];
+            issue.repository = repository;
+            //Replace repository_url from api.github to github.com
+            issue.repository_url = issue.repository_url.replace('api.', '').replace('repos/', '');
+
+            issue.updated = new Date(issue.updated_at) > lastUpdate;
+            if (issue.updated) nUpdated++;
+
+            if (issue.user.login === myUser) {
+              addIssue(myPrs, group, issue);
+            } else {
+              addIssue(otherPrs, group, issue);
+            }
+          }
+
+          var template = $('#file-template').html();
+          Mustache.parse(template);
+          var otherPrsRendered = Mustache.render(template, otherPrs);
+
+          $("#review-prs").html("<b>Review PRs</b>").append(otherPrsRendered);
+          if (nUpdated > 0 ) {
+            notify(nUpdated + " issues updated");
+            changeFavicon('favicon-red.png')
+
+          } else {
+            changeFavicon('favicon-green.png')
+          }
+      }
+    })
+  }
 
 function report(){
   const excludedPrs = [2085] // donut
@@ -150,7 +221,7 @@ function report(){
 
 
   const report = $("#today-report")
-  report.html("I'm off :wave:</br>")
+  report.html("Heading out :wave:</br>")
 
   report.append("In progress:</br>")
   myPrs.flatMap(a => a).filter(i => !excludedPrs.includes(i.number)).forEach( (issue) => {

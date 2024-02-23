@@ -16,18 +16,18 @@
 
     </head>
     <body>
-      <label>Token</label><input id='token' placeholder="token" value='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'/>
+      <label>Token</label><input id='token' placeholder="token" value=''/>
         <label>Search</label><input id='search' placeholder='search' value='is:open is:pr  repo:lightdash/lightdash'/>
       <button id='search-button'>Search</button>
 
+      
         <script id='file-template' type=x-tmpl-mustache>
         {{#.}}
           <div class='pr-group'>
             {{#.}}
               <div class='updated-{{updated}}'></div>
               <img src='{{user.avatar_url}}' />
-            <a href='{{html_url}}' target='_blank'>{{title}}</a>
-
+            <a href='{{html_url}}' target='_blank' style="color:{{#draft}}gray{{/draft}}{{^draft}}blue{{/draft}}">{{title}}</a>
               <label> Repository:</label><a target='_blank' href='{{repository_url}}'>{{repository}}</a>
               <label> Comments:</label><span>{{comments}}</span>
               <label> Author:</label><span>{{user.login}}</span>
@@ -37,6 +37,8 @@
         {{/.}}
         </script>
           <div id='my-prs'>
+          </div>
+          <div id='review-prs'>
           </div>
           <div id='other-prs'>
           </div>
