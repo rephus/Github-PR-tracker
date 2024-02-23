@@ -160,7 +160,6 @@ function search(){
           console.error("Unable to get issues ", json.error);
           return
         }
-        myPrs = [];
           var otherPrs = [];
 
           var getGroup = function(issues, groupName){
@@ -191,7 +190,7 @@ function search(){
             if (issue.updated) nUpdated++;
 
             if (issue.user.login === myUser) {
-              addIssue(myPrs, group, issue);
+              // do nothing, this should only show other PRs that I have to review
             } else {
               addIssue(otherPrs, group, issue);
             }
@@ -203,7 +202,6 @@ function search(){
 
           $("#review-prs").html("<b>Review PRs</b>").append(otherPrsRendered);
           if (nUpdated > 0 ) {
-            notify(nUpdated + " issues updated");
             changeFavicon('favicon-red.png')
 
           } else {
